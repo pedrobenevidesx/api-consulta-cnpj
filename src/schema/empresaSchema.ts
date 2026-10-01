@@ -9,3 +9,7 @@ export const criarEmpresaSchema = z.object ({
     estado: z.string().length(2),
     situacao: z.string().max(30).optional()
 })
+
+export const atualizarEmpresaSchema = criarEmpresaSchema
+    .omit({ cnpj: true })
+    .partial()
