@@ -56,3 +56,15 @@ export async function atualizarEmpresa(cnpj: string, dados: AtualizarEmpresa) {
 
         return empresaAtualizada.rows[0]
 }
+
+export async function deletarEmpresa (cnpj: string) {
+    
+    const empresaDeletada = await pool.query(`
+        DELETE FROM empresas
+        WHERE cnpj = $1
+        RETURNING *`,
+        [cnpj]
+    )
+
+    return empresaDeletada.rows[0]
+}
