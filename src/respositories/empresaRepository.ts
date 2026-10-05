@@ -6,6 +6,7 @@ import { criarEmpresaSchema, atualizarEmpresaSchema } from "../schema/empresaSch
 type CriarEmpresa = z.infer<typeof criarEmpresaSchema>
 type AtualizarEmpresa = z.infer<typeof atualizarEmpresaSchema>
 
+
 export async function buscarPorCnpj(cnpj: string) {
 
     const resultadoCnpj = await pool.query("SELECT * FROM empresas WHERE cnpj = $1",
@@ -17,6 +18,7 @@ export async function buscarPorCnpj(cnpj: string) {
 }
 
 
+
 export async function listarTodasEmpresas() {
     const todasEmpresas = await pool.query("SELECT * FROM empresas")
 
@@ -24,21 +26,33 @@ export async function listarTodasEmpresas() {
 }
 
 
-export async function criarEmpresa(dados: CriarEmpresa) {
 
-    // RETURNING * faz o postgresql devolver o registro que acabou de ser criado
-    const novaEmpresa = await pool.query("INSERT INTO empresas (cnpj, nome, cidade, estado, situacao) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [
-            dados.cnpj,
-            dados.nome,
-            dados.cidade ?? null, // caso nao seja preenchido, envia null para o banco
-            dados.estado,
-            dados.situacao ?? null // caso nao seja preenchido, envia null para o banco
-        ]
-    )
-    
-    return novaEmpresa.rows[0]
+type Origem = "brasilapi" | "manual"
+
+export async function criarEmpresa(dados: CriarEmpresa, origem: Origem) {
+
+    try{
+        // RETURNING * faz o postgresql devolver o registro que acabou de ser criado
+        const novaEmpresa = await pool.query("INSERT INTO empresas (cnpj, nome, cidade, estado, situacao) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+            [
+                dados.cnpj,
+                dados.nome,
+                dados.cidade ?? null, // caso nao seja preenchido, envia null para o banco
+                dados.estado,
+                dados.situacao ?? null, // caso nao seja preenchido, envia null para o banco
+                origem,
+            ]
+        )
+        
+        return novaEmpresa.rows[0]
+    } catch (err: any) {
+        if (err.code === "23505") {
+            throw new Error("CNPJ já cadastrado")
+        }
+        throw err
+    }
 }
+
 
 
 export async function atualizarEmpresa(cnpj: string, dados: AtualizarEmpresa) {
@@ -56,6 +70,8 @@ export async function atualizarEmpresa(cnpj: string, dados: AtualizarEmpresa) {
 
         return empresaAtualizada.rows[0]
 }
+
+
 
 export async function deletarEmpresa (cnpj: string) {
     

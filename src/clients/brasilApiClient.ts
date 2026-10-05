@@ -5,6 +5,7 @@ const BASE_URL = "https://brasilapi.com.br/api/cnpj/v1"
 export async function buscarCnpjNaBrasilApi(cnpj: string) {
     
     const resposta = await fetch(`${BASE_URL}/${cnpj}`, {
+        // argumento para conseguir passar pela protecao da BrasilApi
         headers: {
             "User-Agent": "api-empresas/1.0",
         },
@@ -15,7 +16,7 @@ export async function buscarCnpjNaBrasilApi(cnpj: string) {
     }
 
     if (!resposta.ok) {
-        throw new Error(`Erro ao consutlar a BrasilAPI: ${resposta.status}`)
+        throw new Error(`Erro ao consultar a BrasilAPI: ${resposta.status}`)
     }
 
     const dadosBrutos = await resposta.json()
