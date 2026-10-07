@@ -1,7 +1,8 @@
-import { buscarPorCnpj, criarEmpresa } from "../respositories/empresaRepository.js";
+import { buscarPorCnpj, criarEmpresa } from "../repositories/empresaRepository.js";
 import { buscarCnpjNaBrasilApi } from "../clients/brasilApiClient.js";
 
 export async function consultarEmpresa(cnpj: string) {
+    
     const empresaNoBanco = await buscarPorCnpj(cnpj)
 
     if (empresaNoBanco) {
@@ -14,7 +15,7 @@ export async function consultarEmpresa(cnpj: string) {
         return null
     }
 
-    const empresaSalva = await criarEmpresa(empresaNaBrasilApi)
+    const empresaSalva = await criarEmpresa(empresaNaBrasilApi, "brasilapi")
 
     return empresaSalva
 }

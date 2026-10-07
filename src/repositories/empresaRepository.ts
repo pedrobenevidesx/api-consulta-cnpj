@@ -1,8 +1,8 @@
 import { pool } from "../config/db.js"
 import { z } from "zod"
-import { criarEmpresaSchema, atualizarEmpresaSchema } from "../schema/empresaSchema.js"
+import { criarEmpresaSchema, atualizarEmpresaSchema } from "../schemas/empresaSchema.js"
 
-// tranforma schema Zod criarEmpresaSchema em tipo Typescript
+// tranforma schema Zod criarEmpresaSchema e atualizacaoEmpresa em tipo Typescript
 type CriarEmpresa = z.infer<typeof criarEmpresaSchema>
 type AtualizarEmpresa = z.infer<typeof atualizarEmpresaSchema>
 
@@ -26,14 +26,14 @@ export async function listarTodasEmpresas() {
 }
 
 
-
+// type para dizer se a empresa criada veio da BrasilApi ou se foi adicionada de forma manual pelo usuario
 type Origem = "brasilapi" | "manual"
 
 export async function criarEmpresa(dados: CriarEmpresa, origem: Origem) {
 
     try{
         // RETURNING * faz o postgresql devolver o registro que acabou de ser criado
-        const novaEmpresa = await pool.query("INSERT INTO empresas (cnpj, nome, cidade, estado, situacao) VALUES ($1, $2, $3, $4, $5) RETURNING *",
+        const novaEmpresa = await pool.query("INSERT INTO empresas (cnpj, nome, cidade, estado, situacao, origem) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
             [
                 dados.cnpj,
                 dados.nome,
@@ -57,7 +57,7 @@ export async function criarEmpresa(dados: CriarEmpresa, origem: Origem) {
 
 export async function atualizarEmpresa(cnpj: string, dados: AtualizarEmpresa) {
 
-    // usa o COALESCE para o caso de algum campo nao ser atualizado, ele manter o valor que estava salvo antes
+    // // mantém o valor atual quando o campo não foi informado
     const empresaAtualizada = await pool.query(
         `UPDATE empresas
          SET nome = COALESCE($1, nome),

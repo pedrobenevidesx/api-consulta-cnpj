@@ -1,4 +1,4 @@
-import { brasilApiSchema } from "../schema/brasilApiSchema.js"
+import { brasilApiSchema } from "../schemas/brasilApiSchema.js"
 
 const BASE_URL = "https://brasilapi.com.br/api/cnpj/v1"
 

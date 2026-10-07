@@ -1,13 +1,15 @@
 import "dotenv/config";
 import express from "express";
-import { pool } from "./config/db.js"
+import { empresaRoutes } from "./routes/empresaRoutes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express()
+const port = process.env.PORT ?? 3000
 
-app.get("/", (req, res) => {
-    res.json("Servidor funcionando!")
-})
+app.use(express.json())
+app.use(empresaRoutes)
+app.use(errorHandler)
 
-app.listen(3000, () => {
-    console.log("Servidor rodando na porta 3000")
+app.listen(port, () => {
+    console.log(`Servidor rodando na porta ${port}`)
 })
