@@ -58,6 +58,16 @@ Exemplo de corpo para o `POST /empresas`:
 
 Códigos de resposta que a API devolve: `200`, `201` (cadastro), `400` (dados inválidos), `404` (empresa não encontrada), `409` (CNPJ já cadastrado) e `500` (erro inesperado).
 
+## Exemplos
+
+Requisições feitas pelo Insomnia. Na listagem aparecem empresas de origens diferentes: as duas primeiras vieram da BrasilAPI na primeira consulta, e a última foi cadastrada manualmente.
+
+![Resposta do GET /empresas](img/get-listar-empresas.png)
+
+Cadastro manual, com resposta `201`. O campo `origem` não vai no corpo da requisição: quem preenche é o servidor.
+
+![Cadastro manual via POST /empresas](img/post-cadastro-manual.png)
+
 ## Como rodar
 
 Você precisa de Node.js e de um PostgreSQL rodando.
